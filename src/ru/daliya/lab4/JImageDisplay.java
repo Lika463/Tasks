@@ -5,7 +5,7 @@ public class JImageDisplay extends javax.swing.JComponent {
 
     }
     void drawPixel (int x, int y, int rgbColor){
-
+  ///
     }
 
 }
