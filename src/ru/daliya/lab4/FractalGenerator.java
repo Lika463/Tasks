@@ -9,6 +9,8 @@ import java.awt.geom.Rectangle2D;
  */
 public abstract class FractalGenerator {
 
+    public static FractalGenerator Mandelbrot;
+
     /**
      * This static helper function takes an integer coordinate and converts it
      * into a double-precision value corresponding to a specific range.  It is
