@@ -14,21 +14,21 @@ public class Complex {
         this.y = y;
     }
 
-    public Complex sum(Complex b) {
-        Complex a = new Complex();
-        a.x = this.x + b.x;
-        a.y = this.y + b.y;
-        return a;
+    public Complex sum(Complex other) {
+        Complex complex = new Complex();
+        complex.x = this.x + other.x;
+        complex.y = this.y + other.y;
+        return complex;
     }
 
     public Complex step2() {
-        double buf = x;
+        double temp = x;
         x = x * x - y * y;
-        y = 2 * buf * y;
+        y = 2 * temp * y;
         return this;
     }
 
-    public boolean isMoreThan(double a) {
-        return (x * x + y * y) > a * a;
+    public boolean isMoreThan(double other) {
+        return (x * x + y * y) > other * other;
     }
 }

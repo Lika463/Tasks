@@ -2,7 +2,7 @@ package ru.daliya.lab4;
 
 import java.awt.geom.Rectangle2D;
 
-public class Mandelbrot extends FractalGenerator{
+public class Mandelbrot extends FractalGenerator {
     public static final int MAX_ITERATIONS = 2000;
 
     @Override
