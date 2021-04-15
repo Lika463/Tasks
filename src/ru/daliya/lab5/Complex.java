@@ -1,5 +1,7 @@
 package ru.daliya.lab5;
 
+import static java.lang.Math.abs;
+
 public class Complex {
     public double x;
     public double y;
@@ -9,7 +11,7 @@ public class Complex {
         y = 0;
     }
 
-    Complex(double x, double y) {
+    public Complex(double x, double y) {
         this.x = x;
         this.y = y;
     }
@@ -25,6 +27,19 @@ public class Complex {
         double temp = x;
         x = x * x - y * y;
         y = 2 * temp * y;
+        return this;
+    }
+
+    public Complex step2sopr() {
+        double temp = x;
+        x = x * x - y * y;
+        y = -2 * temp * y;
+        return this;
+    }
+
+    public Complex AbsImAndReParts() {
+        x = abs(x);
+        y = abs(y);
         return this;
     }
 

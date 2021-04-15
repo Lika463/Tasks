@@ -1,4 +1,7 @@
-package ru.daliya.lab5;
+package ru.daliya.lab5.fractals;
+
+import ru.daliya.lab5.Complex;
+import ru.daliya.lab5.FractalGenerator;
 
 import java.awt.geom.Rectangle2D;
 
@@ -21,10 +24,10 @@ public class Mandelbrot extends FractalGenerator {
         int iterations = 0;
         Complex c = new Complex(x, y);
         Complex z = new Complex(0, 0);
-        while (iterations < MAX_ITERATIONS){
+        while (iterations < MAX_ITERATIONS) {
             iterations++;
             z = z.step2().sum(c);
-            if (z.isMoreThan(2)){
+            if (z.isMoreThan(2)) {
                 return iterations;
             }
         }
@@ -32,5 +35,8 @@ public class Mandelbrot extends FractalGenerator {
 
     }
 
-
+    @Override
+    public String toString() {
+        return "Mandelbrot";
+    }
 }

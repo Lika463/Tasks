@@ -4,29 +4,36 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class JImageDisplay extends javax.swing.JComponent {
-    private BufferedImage image;
+    private final BufferedImage bufferedImage;
 
     public JImageDisplay(int width, int height) {
-        image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         super.setPreferredSize(new Dimension(width, height));
+    }
+
+    public BufferedImage getBufferedImage() {
+        return bufferedImage;
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawImage(image, 0, 0, image.getWidth(), image.getHeight(), null);
+        g.drawImage(bufferedImage, 0, 0, bufferedImage.getWidth(), bufferedImage.getHeight(), null);
     }
 
     public void clearImage() {
-        for (int x = 0; x < image.getWidth(); x++) {
-            for (int y = 0; y < image.getHeight(); y++) {
+
+        for (int x = 0; x < bufferedImage.getWidth(); x++) {
+            for (int y = 0; y < bufferedImage.getHeight(); y++) {
                 drawPixel(x, y, 0);
             }
         }
+
+
     }
 
     void drawPixel(int x, int y, int rgbColor) {
-        image.setRGB(x, y, rgbColor);
+        bufferedImage.setRGB(x, y, rgbColor);
     }
 
 }
