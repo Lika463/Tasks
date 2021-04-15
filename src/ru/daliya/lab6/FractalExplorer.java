@@ -23,6 +23,12 @@ public class FractalExplorer {
     private FractalGenerator fractalGenerator;
     private final Rectangle2D.Double range;
     private JFrame frame;
+    private Button buttonReset;
+    private Button buttonSaveImage;
+    private JComboBox<FractalGenerator> comboBox;
+
+    private int rowsRemaining;
+    private boolean interfaceEnabled;
 
     public FractalExplorer(int screenSize) {
         this.screenSize = screenSize;
@@ -39,13 +45,13 @@ public class FractalExplorer {
 
     public void createAndShowGUI() {
         // Кнопка сброса
-        Button buttonReset = new Button("Reset");
+        buttonReset = new Button("Reset");
         buttonReset.setSize(screenSize / 3, 50);
         buttonReset.addActionListener(new JButtonClick());
         buttonReset.setVisible(true);
 
         // Кнопка сохранения фрактала
-        Button buttonSaveImage = new Button("Save Image");
+        buttonSaveImage = new Button("Save Image");
         buttonSaveImage.setSize(screenSize / 3, 50);
         buttonSaveImage.addActionListener(new ButtonSaveClick());
         buttonSaveImage.setVisible(true);
@@ -56,7 +62,7 @@ public class FractalExplorer {
         Tricorn TricornFractal = new Tricorn();
 
         // Комбобокс выбора фракталов
-        JComboBox<FractalGenerator> comboBox = new JComboBox<>();
+        comboBox = new JComboBox<>();
         comboBox.addItem(MandelbrotFractal);
         comboBox.addItem(BurningShipFractal);
         comboBox.addItem(TricornFractal);
@@ -113,27 +119,6 @@ public class FractalExplorer {
         this.drawFractal();
     }
 
-    private void drawFractal() {
-        for (int x = 0; x < screenSize; x++) {
-            for (int y = 0; y < screenSize; y++) {
-                double xCoord = FractalGenerator.getCoord(range.x, range.x + range.width, screenSize, x);
-                double yCoord = FractalGenerator.getCoord(range.y, range.y + range.height, screenSize, y);
-
-                int iterations = fractalGenerator.numIterations(xCoord, yCoord);
-
-                int rgbColor = 0;
-
-                if (iterations != -1) {
-                    float hue = 0.7f + (float) iterations / 200f;
-                    rgbColor = Color.HSBtoRGB(hue, 1f, 1f);
-                }
-
-                display.drawPixel(x, y, rgbColor);
-            }
-        }
-
-        display.repaint();
-    }
 
     private class JMouseAdapter extends MouseAdapter {
         @Override
@@ -174,6 +159,71 @@ public class FractalExplorer {
 				JOptionPane.showMessageDialog(frame, "Возникли проблемы при сохранении картинки!" + exception.getMessage(), "error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
+    }
+
+    private class FractalWorker extends SwingWorker<Object, Object>{
+        int y;
+        int[] colorArray;
+        FractalWorker(int y){
+            this.y = y;
+        }
+        @Override
+        protected Object doInBackground() throws Exception {
+            colorArray = new int[display.getWidth()];
+
+            double xCoordinate, yCoordinate;
+            int iterations;
+            float hue;
+            int rgbColor;
+            for (int x = 0; x < display.getWidth(); x++){
+                xCoordinate = fractalGenerator.getCoord(range.x, range.x + range.width, screenSize, x);
+                yCoordinate = fractalGenerator.getCoord(range.y, range.y + range.height, screenSize, y);
+                iterations = fractalGenerator.numIterations(xCoordinate, yCoordinate);
+                if (iterations != -1) {
+                    hue = 0.7f + (float) iterations / 200f;
+                    rgbColor = Color.HSBtoRGB(hue, 1f, 1f);
+                } else {
+                    rgbColor = 0;
+                }
+                colorArray[x] = rgbColor;
+            }
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            for (int x = 0; x < display.getWidth(); x++){
+                display.drawPixel(x, y, colorArray[x]);
+            }
+            display.repaint(0, 0, y, display.getWidth(), 1);
+            rowsRemaining--;
+            if (rowsRemaining == 0){
+                enableUI(true);
+            }
+        }
+    }
+
+    public void enableUI(boolean value){
+        buttonSaveImage.setEnabled(value);
+        buttonReset.setEnabled(value);
+        comboBox.setEnabled(value);
+        interfaceEnabled = value;
+    }
+
+    private void drawFractal(){
+        rowsRemaining = display.getHeight();
+        enableUI(false);
+        for (int counter = 0; counter < display.getHeight(); counter+=4){
+            FractalWorker worker1 = new FractalWorker(counter);
+            FractalWorker worker2 = new FractalWorker(counter+1);
+            FractalWorker worker3 = new FractalWorker(counter+2);
+            FractalWorker worker4 = new FractalWorker(counter+3);
+            worker1.execute();
+            worker2.execute();
+            worker3.execute();
+            worker4.execute();
+        }
+
     }
 }
 
